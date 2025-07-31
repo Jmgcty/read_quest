@@ -20,6 +20,7 @@ class MyApp extends ConsumerWidget {
       title: 'Flutter Read Quest',
       theme: AppTheme.light,
       routerConfig: routerConfig,
+      debugShowCheckedModeBanner: false,
     );
   }
 }
