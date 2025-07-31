@@ -1,7 +1,7 @@
 enum RouteName {
   root(path: '/'),
   start(path: '/start'),
-  home(path: '/home'),
+  home(path: '/home/:userType'),
   login(path: '/login'),
   register(path: '/register');
 
