@@ -3,6 +3,7 @@ import 'package:read_quest/core/utils/enum/user_type_enum.dart';
 import 'package:read_quest/features/auth/views/login_screen.dart';
 import 'package:read_quest/features/auth/views/register_screen.dart';
 import 'package:read_quest/features/home/views/home_screen.dart';
+import 'package:read_quest/features/membership/views/membership_screen.dart';
 import 'package:read_quest/features/start/views/get_started_screen.dart';
 
 import 'package:read_quest/router/route_name_enum.dart';
@@ -15,7 +16,7 @@ final isUserLoggedInProvider = FutureProvider<bool>(
 
 final routerProvider = Provider<GoRouter>(
   (ref) => GoRouter(
-    initialLocation: RouteName.login.path,
+    initialLocation: RouteName.membership.path,
     debugLogDiagnostics: true,
 
     routes: [
@@ -33,6 +34,14 @@ final routerProvider = Provider<GoRouter>(
         path: RouteName.register.path,
         name: RouteName.register.name,
         builder: (context, state) => RegisterScreen(),
+      ),
+      GoRoute(
+        path: RouteName.membership.path,
+        name: RouteName.membership.name,
+        builder: (context, state) {
+          final status = state.extra?.toString();
+          return MembershipScreen(status: status);
+        },
       ),
       GoRoute(
         path: RouteName.home.path,

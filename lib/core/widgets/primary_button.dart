@@ -5,6 +5,7 @@ class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
     required this.label,
     this.disabled = false,
+    this.color,
     this.onPressed,
     super.key,
   });
@@ -12,6 +13,7 @@ class PrimaryButton extends StatelessWidget {
   final String label;
   final bool disabled;
   final VoidCallback? onPressed;
+  final Color? color;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -23,7 +25,7 @@ class PrimaryButton extends StatelessWidget {
         ),
         fixedSize: WidgetStateProperty.all(Size.fromWidth(size.width)),
         backgroundColor: WidgetStateProperty.all(
-          disabled ? AppColors.disabled : AppColors.secondary,
+          disabled ? AppColors.disabled : color ?? AppColors.secondary,
         ),
       ),
       onPressed: onPressed,
