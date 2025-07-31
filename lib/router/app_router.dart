@@ -1,15 +1,22 @@
 import 'package:go_router/go_router.dart';
 import 'package:read_quest/features/auth/views/login_screen.dart';
 import 'package:read_quest/features/auth/views/register_screen.dart';
-import 'package:read_quest/features/home/start/views/get_started_screen.dart';
+import 'package:read_quest/features/start/views/get_started_screen.dart';
 import 'package:read_quest/features/home/views/home_screen.dart';
+
 import 'package:read_quest/router/route_name_enum.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final isUserLoggedInProvider = FutureProvider<bool>(
+  (ref) =>
+      Future.delayed(const Duration(seconds: 10), () => Future.value(true)),
+);
 
 final routerProvider = Provider<GoRouter>(
   (ref) => GoRouter(
     initialLocation: RouteName.root.path,
     debugLogDiagnostics: true,
+
     routes: [
       GoRoute(
         path: RouteName.root.path,
