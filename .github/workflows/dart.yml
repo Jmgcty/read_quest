@@ -16,18 +16,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Flutter
-        uses: dart-lang/setup-flutter@v2
-        with:
-          flutter-version: 'stable'  # or specify a specific version
-          
+        run: |
+          git clone https://github.com/flutter/flutter.git /home/runner/flutter
+          echo "/home/runner/flutter/bin" >> $GITHUB_PATH
+
       - name: Checkout code
         uses: actions/checkout@v4
-
+        
       - name: Install dependencies
         run: flutter pub get
-        
+
       - name: Analyze project source
         run: flutter analyze
         
       - name: Run tests
         run: flutter test
+
