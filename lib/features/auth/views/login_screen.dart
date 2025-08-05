@@ -1,16 +1,72 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:read_quest/core/const/app_assets.dart';
 import 'package:read_quest/core/const/app_border_settings.dart';
 import 'package:read_quest/core/const/app_colors.dart';
+import 'package:read_quest/core/modals/loading_modal.dart';
 import 'package:read_quest/core/widgets/primary_button.dart';
+import 'package:read_quest/features/auth/model/auth_model.dart';
+import 'package:read_quest/features/auth/repository/auth_repository.dart';
+import 'package:read_quest/features/auth/views/register_screen.dart';
+import 'package:read_quest/features/home/views/home_screen.dart';
 
-class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key});
+class LoginScreen extends ConsumerStatefulWidget {
+  const LoginScreen({super.key});
 
+  @override
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final formKey = GlobalKey<FormState>();
   final idController = TextEditingController();
   final passwordController = TextEditingController();
+
+  void login() async {
+    if (!formKey.currentState!.validate()) return;
+
+    //
+    LoadingModal.showLoadingModal(context);
+    final authRepo = ref.read(authRepositoryProvider);
+    final auth = AuthModel(
+      uid: idController.text,
+      password: passwordController.text,
+    );
+    final result = await authRepo.login(auth);
+    LoadingModal.hideLoadingModal(context);
+    if (result.isSuccess) {
+      await AwesomeDialog(
+        context: context,
+        dialogType: DialogType.success,
+        animType: AnimType.scale,
+        title: 'Success',
+        desc: 'Login Successfully',
+      ).show();
+      Navigator.pushReplacement(
+        context,
+        CupertinoPageRoute(builder: (_) => HomeScreen()),
+      );
+      return;
+    }
+
+    await AwesomeDialog(
+      context: context,
+      dialogType: DialogType.error,
+      animType: AnimType.scale,
+      title: 'Error',
+      desc: result.error,
+    ).show();
+  }
+
+  @override
+  dispose() {
+    idController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +102,7 @@ class LoginScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     //? TOP LABELS
-                    Text('Login', style: theme.textTheme.headlineLarge),
+                    Text('Login Account', style: theme.textTheme.headlineLarge),
                     Gap(size.height / 60),
                     Text(
                       'Please enter your existing credentials.',
@@ -83,12 +139,7 @@ class LoginScreen extends StatelessWidget {
                     Gap(size.height / 60),
 
                     //? LOGIN BUTTON
-                    PrimaryButton(
-                      label: 'Login',
-                      onPressed: () {
-                        //TODO: CREATE LOGIN LOGIC
-                      },
-                    ),
+                    PrimaryButton(label: 'Login', onPressed: login),
 
                     Gap(size.height / 60),
 
@@ -103,9 +154,12 @@ class LoginScreen extends StatelessWidget {
                           ),
                         ),
                         TextButton(
-                          onPressed: () {
-                            //TODO: CREATE SIGN UP NAVIGATION LOGIC
-                          },
+                          onPressed: () => Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                              builder: (_) => const RegisterScreen(),
+                            ),
+                          ),
                           child: Text(
                             'Register',
                             style: theme.textTheme.bodyMedium!.copyWith(
