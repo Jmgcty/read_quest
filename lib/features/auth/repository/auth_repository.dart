@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:appwrite/appwrite.dart';
 import 'package:appwrite/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:read_quest/core/const/appwrite_collectioN_id.dart';
+import 'package:read_quest/core/const/appwrite_collection_id.dart';
 import 'package:read_quest/core/handler/appwrite_result_handler.dart';
 import 'package:read_quest/core/services/appwrite.dart';
 import 'package:read_quest/core/services/pref_storage.dart';
