@@ -68,9 +68,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
       if (!mounted) return;
 
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
         CupertinoPageRoute(builder: (_) => MembershipScreen()),
+        (route) => false,
       );
     } else {
       await AwesomeDialog(

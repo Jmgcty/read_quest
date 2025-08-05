@@ -13,6 +13,7 @@ dependencies:
   email_validator: ^3.0.0
   flutter:
     sdk: flutter
+  flutter_dotenv: ^5.2.1
   flutter_riverpod: ^2.6.1
   gap: ^3.0.1
   go_router: ^16.0.0
@@ -28,6 +29,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - .env
     - assets/
     - assets/images/
     - assets/svgs/
