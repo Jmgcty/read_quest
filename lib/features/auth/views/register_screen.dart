@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
 import 'package:read_quest/core/const/app_assets.dart';
 import 'package:read_quest/core/const/app_border_settings.dart';
 import 'package:read_quest/core/const/app_colors.dart';
@@ -16,7 +15,6 @@ import 'package:read_quest/features/auth/provider/show_password_toggle.dart';
 import 'package:read_quest/features/auth/repository/auth_repository.dart';
 import 'package:read_quest/features/auth/views/login_screen.dart';
 import 'package:read_quest/features/membership/views/membership_screen.dart';
-import 'package:read_quest/router/route_name_enum.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -37,8 +35,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   void signup() async {
     if (!formKey.currentState!.validate()) return;
 
-    //
     LoadingModal.showLoadingModal(context);
+
     final authRepo = ref.read(authRepositoryProvider);
 
     final auth = AuthModel(
@@ -53,10 +51,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       name: nameController.text,
     );
 
-    // //
     final result = await authRepo.register(auth, user);
 
+    if (!mounted) return;
+
     LoadingModal.hideLoadingModal(context);
+
     if (result.isSuccess) {
       await AwesomeDialog(
         context: context,
@@ -66,11 +66,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         desc: 'Registration Successfully',
       ).show();
 
+      if (!mounted) return;
+
       Navigator.pushReplacement(
         context,
         CupertinoPageRoute(builder: (_) => MembershipScreen()),
       );
-      return;
     } else {
       await AwesomeDialog(
         context: context,

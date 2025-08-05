@@ -28,15 +28,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   void login() async {
     if (!formKey.currentState!.validate()) return;
 
-    //
+    // Show loading before async gap
     LoadingModal.showLoadingModal(context);
+
     final authRepo = ref.read(authRepositoryProvider);
     final auth = AuthModel(
       uid: idController.text,
       password: passwordController.text,
     );
+
     final result = await authRepo.login(auth);
+
+    if (!mounted) return;
+
     LoadingModal.hideLoadingModal(context);
+
     if (result.isSuccess) {
       await AwesomeDialog(
         context: context,
@@ -45,9 +51,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         title: 'Success',
         desc: 'Login Successfully',
       ).show();
+
+      if (!mounted) return;
+
       Navigator.pushReplacement(
         context,
-        CupertinoPageRoute(builder: (_) => HomeScreen()),
+        CupertinoPageRoute(builder: (_) => const HomeScreen()),
       );
       return;
     }
