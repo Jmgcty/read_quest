@@ -1,9 +1,10 @@
+// ignore_for_file: unused_result
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
 import 'package:read_quest/core/const/app_colors.dart';
 import 'package:read_quest/core/modals/loading_modal.dart';
 import 'package:read_quest/core/utils/enum/member_enum.dart';
@@ -11,7 +12,6 @@ import 'package:read_quest/core/widgets/primary_button.dart';
 import 'package:read_quest/features/home/views/home_screen.dart';
 import 'package:read_quest/features/membership/provider/get_future_membership.dart';
 import 'package:read_quest/features/membership/repository/member_repository.dart';
-import 'package:read_quest/router/route_name_enum.dart';
 
 class MembershipPendingScreen extends ConsumerStatefulWidget {
   const MembershipPendingScreen({super.key});
@@ -24,9 +24,18 @@ class MembershipPendingScreen extends ConsumerStatefulWidget {
 class _MembershipPendingScreenState
     extends ConsumerState<MembershipPendingScreen> {
   void checkStatus() async {
+    if (!mounted) return;
+
     LoadingModal.showLoadingModal(context);
+
     final value = await ref.read(memberRepositoryProvider).getMembership();
+
+    if (!mounted) return;
+
     LoadingModal.hideLoadingModal(context);
+
+    if (!mounted) return;
+
     if (value?.status.name == MemberStatus.accepted.name) {
       await AwesomeDialog(
         context: context,
@@ -36,10 +45,11 @@ class _MembershipPendingScreenState
         desc: 'Your Account is Accepted',
       ).show();
 
-      //
+      if (!mounted) return;
+
       Navigator.pushReplacement(
         context,
-        CupertinoPageRoute(builder: (_) => HomeScreen()),
+        CupertinoPageRoute(builder: (_) => const HomeScreen()),
       );
     } else if (value?.status.name == MemberStatus.rejected.name) {
       await AwesomeDialog(
@@ -50,8 +60,12 @@ class _MembershipPendingScreenState
         desc: 'Your Account is Rejected',
       ).show();
 
+      if (!mounted) return;
+
       ref.refresh(getMembershipProvider);
     } else {
+      if (!mounted) return;
+
       AwesomeDialog(
         context: context,
         dialogType: DialogType.question,

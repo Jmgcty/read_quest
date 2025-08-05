@@ -12,6 +12,7 @@ import 'package:read_quest/features/home/views/home_screen.dart';
 import 'package:read_quest/features/membership/repository/member_repository.dart';
 import 'package:read_quest/features/membership/views/membership_screen.dart';
 
+// ignore: must_be_immutable
 class GetStartedScreen extends ConsumerStatefulWidget {
   GetStartedScreen({super.key});
   bool isButtonHide = true;
@@ -22,20 +23,26 @@ class GetStartedScreen extends ConsumerStatefulWidget {
 class _GetStartedScreenState extends ConsumerState<GetStartedScreen> {
   @override
   void initState() {
-    init();
+    WidgetsBinding.instance.addPostFrameCallback((_) => init());
     super.initState();
   }
 
   void init() async {
     final user = await ref.read(authRepositoryProvider).getCurrentUser();
+
+    if (!mounted) return;
+
     if (user != null) {
       final membership = await ref
           .read(memberRepositoryProvider)
           .getMembership();
+
+      if (!mounted) return;
+
       if (membership?.status.name == MemberStatus.accepted.name) {
         Navigator.pushReplacement(
           context,
-          CupertinoPageRoute(builder: (_) => HomeScreen()),
+          CupertinoPageRoute(builder: (_) => const HomeScreen()),
         );
       } else {
         Navigator.pushReplacement(
@@ -45,7 +52,11 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen> {
       }
       return;
     }
+
     await SharedPrefStorage.instance.removeAuthSession();
+
+    if (!mounted) return;
+
     setState(() {
       widget.isButtonHide = false;
     });

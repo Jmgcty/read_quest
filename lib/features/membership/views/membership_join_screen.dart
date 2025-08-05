@@ -1,8 +1,9 @@
+// ignore_for_file: unused_result
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:read_quest/core/const/app_colors.dart';
 import 'package:read_quest/core/modals/loading_modal.dart';
@@ -11,7 +12,6 @@ import 'package:read_quest/core/widgets/primary_button.dart';
 import 'package:read_quest/features/membership/provider/get_future_membership.dart';
 
 import 'package:read_quest/features/membership/repository/member_repository.dart';
-import 'package:read_quest/router/route_name_enum.dart';
 
 class MembershipJoinScreen extends ConsumerStatefulWidget {
   const MembershipJoinScreen({super.key});
@@ -23,41 +23,55 @@ class MembershipJoinScreen extends ConsumerStatefulWidget {
 
 class _MembershipJoinScreenState extends ConsumerState<MembershipJoinScreen> {
   void joinMembership(UserTypes userType) async {
+    if (!mounted) return;
+
     await AwesomeDialog(
       context: context,
       dialogType: DialogType.question,
       animType: AnimType.bottomSlide,
       title: 'Join Membership',
-      desc: 'Do you want to join as $userType?',
-      btnOkOnPress: () async {
-        LoadingModal.showLoadingModal(context);
-        final result = await ref
-            .read(memberRepositoryProvider)
-            .joinGroup(userType);
-        LoadingModal.hideLoadingModal(context);
-        if (result.isSuccess) {
-          await AwesomeDialog(
-            context: context,
-            dialogType: DialogType.success,
-            animType: AnimType.scale,
-            title: 'Success',
-            desc: 'You have successfully joined as ${userType.name}.',
-          ).show();
-          ref.refresh(getMembershipProvider);
-          return;
-        } else {
-          AwesomeDialog(
-            context: context,
-            dialogType: DialogType.error,
-            animType: AnimType.scale,
-            title: 'Error',
-            desc: result.error,
-          ).show();
-        }
+      desc: 'Do you want to join as ${userType.name}?',
+      btnOkOnPress: () {
+        _handleJoin(userType);
       },
-      btnCancelOnPress: () => {},
+      btnCancelOnPress: () {},
       btnOkColor: AppColors.primary,
     ).show();
+  }
+
+  void _handleJoin(UserTypes userType) async {
+    if (!mounted) return;
+
+    LoadingModal.showLoadingModal(context);
+
+    final result = await ref.read(memberRepositoryProvider).joinGroup(userType);
+
+    if (!mounted) return;
+
+    LoadingModal.hideLoadingModal(context);
+
+    if (result.isSuccess) {
+      if (!mounted) return;
+      await AwesomeDialog(
+        context: context,
+        dialogType: DialogType.success,
+        animType: AnimType.scale,
+        title: 'Success',
+        desc: 'You have successfully joined as ${userType.name}.',
+      ).show();
+
+      if (!mounted) return;
+      ref.refresh(getMembershipProvider);
+    } else {
+      if (!mounted) return;
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.error,
+        animType: AnimType.scale,
+        title: 'Error',
+        desc: result.error,
+      ).show();
+    }
   }
 
   @override

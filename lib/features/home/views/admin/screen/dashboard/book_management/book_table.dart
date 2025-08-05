@@ -17,7 +17,6 @@ class BooksTableScreen extends ConsumerStatefulWidget {
 class _BooksTableScreenState extends ConsumerState<BooksTableScreen> {
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     final member = ref.watch(allRealtimeAcceptedMemberProvider);
 
     //
