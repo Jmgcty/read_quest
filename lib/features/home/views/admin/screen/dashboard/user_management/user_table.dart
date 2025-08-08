@@ -1,3 +1,5 @@
+// ignore_for_file: unused_result
+
 import 'package:flutter/material.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +15,12 @@ class UsersTableScreen extends ConsumerStatefulWidget {
 }
 
 class _UsersTableScreenState extends ConsumerState<UsersTableScreen> {
+  @override
+  void initState() {
+    ref.refresh(allRealtimeAcceptedMemberProvider);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final member = ref.watch(allRealtimeAcceptedMemberProvider);
