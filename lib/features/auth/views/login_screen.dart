@@ -54,9 +54,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       if (!mounted) return;
 
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
         CupertinoPageRoute(builder: (_) => const HomeScreen()),
+        (route) => false,
       );
       return;
     }
