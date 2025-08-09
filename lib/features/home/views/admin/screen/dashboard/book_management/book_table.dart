@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_quest/core/const/app_colors.dart';
 import 'package:read_quest/features/home/views/admin/provider/user_provider.dart';
 import 'package:read_quest/core/model/member_model.dart';
-import 'package:read_quest/features/home/views/admin/screen/dashboard/book_management/add_book.dart';
+import 'package:read_quest/features/home/views/admin/screen/dashboard/book_management/upload_book/add_book.dart';
 
 class BooksTableScreen extends ConsumerStatefulWidget {
   const BooksTableScreen({super.key});
