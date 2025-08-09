@@ -44,23 +44,20 @@ class BookSummary extends ConsumerWidget {
   ) {
     return Align(
       alignment: Alignment.center,
-      child: GestureDetector(
-        onTap: coverProviderProvider.setCover,
-        child: Container(
-          height: size.height / 3,
-          width: size.width / 2,
-          decoration: BoxDecoration(
-            color: AppColors.disabled,
-            borderRadius: BorderRadius.circular(AppBorderSettings.borderRadius),
-            border: Border.all(color: AppColors.grey),
-          ),
-          child: coverProvider != null
-              ? Image.file(coverProviderProvider.getCover(), fit: BoxFit.cover)
-              : Align(
-                  alignment: Alignment.center,
-                  child: const Icon(Icons.add_a_photo),
-                ),
+      child: Container(
+        height: size.height / 3,
+        width: size.width / 2,
+        decoration: BoxDecoration(
+          color: AppColors.disabled,
+          borderRadius: BorderRadius.circular(AppBorderSettings.borderRadius),
+          border: Border.all(color: AppColors.grey),
         ),
+        child: coverProvider != null
+            ? Image.file(coverProviderProvider.getCover(), fit: BoxFit.cover)
+            : Align(
+                alignment: Alignment.center,
+                child: const Icon(Icons.add_a_photo),
+              ),
       ),
     );
   }

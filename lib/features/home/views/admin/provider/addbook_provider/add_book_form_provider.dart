@@ -101,6 +101,7 @@ class FileFormProvider extends StateNotifier<FilePickerResult?> {
       type: FileType.custom,
       allowedExtensions: ['pdf'],
     );
+
     if (picked != null) state = picked;
   }
 
@@ -110,6 +111,6 @@ class FileFormProvider extends StateNotifier<FilePickerResult?> {
 }
 
 final fileFormProvider =
-    StateNotifierProvider.autoDispose<FileFormProvider, FilePickerResult?>(
+    StateNotifierProvider<FileFormProvider, FilePickerResult?>(
       (ref) => FileFormProvider(),
     );

@@ -1,8 +1,12 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:read_quest/core/const/app_colors.dart';
+import 'package:read_quest/core/modals/loading_modal.dart';
+import 'package:read_quest/core/model/book_model.dart';
 import 'package:read_quest/core/widgets/primary_button.dart';
+import 'package:read_quest/features/home/repository/book_repository.dart';
 import 'package:read_quest/features/home/views/admin/provider/addbook_provider/add_book_form_provider.dart';
 import 'package:read_quest/features/home/views/admin/provider/addbook_provider/add_book_page_provider.dart';
 import 'package:read_quest/features/home/views/admin/screen/dashboard/book_management/upload_book/widgets/add_book_info.dart';
@@ -19,11 +23,58 @@ class AddBookScreen extends ConsumerStatefulWidget {
 class _AddBookScreenState extends ConsumerState<AddBookScreen> {
   //
 
+  void uploadBook(WidgetRef ref) async {
+    final title = ref.read(titleFormProvider);
+    final cover = ref.read(coverFormProvider);
+    final description = ref.read(descriptionFormProvider);
+    final file = ref.read(fileFormProvider);
+    final repo = ref.read(bookRepositoryProvider);
+
+    // print(
+    //   '${title.text}, ${cover?.path}, ${description.text}, FILE: ${file?.files.first.path}',
+    // );
+    if (file == null) return;
+    final book = BookModel(
+      id: '',
+      cover: cover?.path,
+      title: title.text,
+      description: description.text,
+      file: file.files.first.path ?? '',
+    );
+
+    LoadingModal.showLoadingModal(context);
+    final result = await repo.uploadBook(book);
+    if (!mounted) return;
+    LoadingModal.hideLoadingModal(context);
+    if (result.isSuccess) {
+      await AwesomeDialog(
+        context: context,
+        dialogType: DialogType.success,
+        animType: AnimType.scale,
+        title: 'Success',
+        desc: 'Book uploaded successfully',
+      ).show();
+      if (!mounted) return;
+      Navigator.pop(context);
+      return;
+    } else {
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.error,
+        animType: AnimType.scale,
+        title: 'Failed',
+        desc: result.error,
+      ).show();
+      return;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final pageController = ref.watch(addBookPageProvider(ref));
     final pageControllerProvider = ref.read(addBookPageProvider(ref).notifier);
+    final addBookButtonLabel = ref.watch(addBookButtonLabelProvider);
     final formKey = ref.watch(formKeyProvider);
 
     return Scaffold(
@@ -46,6 +97,7 @@ class _AddBookScreenState extends ConsumerState<AddBookScreen> {
         size,
         pageController,
         pageControllerProvider,
+        addBookButtonLabel,
       ),
     );
   }
@@ -54,6 +106,7 @@ class _AddBookScreenState extends ConsumerState<AddBookScreen> {
     Size size,
     PageController pageController,
     AddBookProvider pageControllerProvider,
+    Map<String, String> addBookButtonLabelProvider,
   ) {
     return Padding(
       padding: EdgeInsets.all(size.width / 20),
@@ -64,7 +117,7 @@ class _AddBookScreenState extends ConsumerState<AddBookScreen> {
           Expanded(
             child: PrimaryButton(
               color: AppColors.textLabel,
-              label: 'Back',
+              label: addBookButtonLabelProvider['prev']!,
               onPressed: pageControllerProvider.previousPage,
             ),
           ),
@@ -72,8 +125,10 @@ class _AddBookScreenState extends ConsumerState<AddBookScreen> {
           Expanded(
             child: PrimaryButton(
               color: AppColors.primary,
-              label: 'Next',
-              onPressed: pageControllerProvider.nextPage,
+              label: addBookButtonLabelProvider['next']!,
+              onPressed: () => pageControllerProvider.pageIndex == 2
+                  ? uploadBook(ref)
+                  : pageControllerProvider.nextPage(),
             ),
           ),
         ],
