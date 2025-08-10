@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_quest/core/const/app_colors.dart';
 import 'package:read_quest/core/utils/enum/member_enum.dart';
-import 'package:read_quest/features/auth/repository/auth_repository.dart';
 import 'package:read_quest/features/home/views/admin/admin_screen.dart';
 import 'package:read_quest/features/home/views/reader/reader_screen.dart';
 import 'package:read_quest/features/home/views/teacher/teacher_screen.dart';
 import 'package:read_quest/features/membership/provider/get_future_membership.dart';
 import 'package:read_quest/features/membership/repository/member_repository.dart';
-import 'package:read_quest/features/membership/views/membership_pending_screen.dart';
 import 'package:read_quest/features/membership/views/membership_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -30,6 +28,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void init() async {
     final member = await ref.read(memberRepositoryProvider).getMembership();
     if (member?.status.name == MemberStatus.pending.name) {
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         CupertinoPageRoute(builder: (_) => MembershipScreen()),
