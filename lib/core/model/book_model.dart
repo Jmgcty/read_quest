@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:read_quest/core/model/user_model.dart';
@@ -23,6 +24,7 @@ class BookModel {
   });
 
   factory BookModel.fromJson(Map<String, dynamic> json) {
+    log(json.toString());
     return BookModel(
       id: json['id'],
       title: json['title'],
