@@ -2,7 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_quest/core/model/member_model.dart';
 import 'package:read_quest/features/membership/repository/member_repository.dart';
 
-final getMembershipProvider = FutureProvider<MemberModel?>((ref) async {
+final getMembershipProvider = FutureProvider.autoDispose<MemberModel?>((
+  ref,
+) async {
   final repo = ref.watch(memberRepositoryProvider);
   return repo.getMembership();
 });
