@@ -1,11 +1,13 @@
+// ignore_for_file: unused_result
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_quest/core/const/app_colors.dart';
-import 'package:read_quest/features/home/views/admin/provider/user_provider.dart';
-import 'package:read_quest/core/model/member_model.dart';
-import 'package:read_quest/features/home/views/admin/screen/dashboard/book_management/add_book.dart';
+import 'package:read_quest/core/model/book_model.dart';
+import 'package:read_quest/features/home/provider/get_realtime_book_list.dart';
+import 'package:read_quest/features/home/views/admin/screen/dashboard/book_management/upload_book/add_book.dart';
 
 class BooksTableScreen extends ConsumerStatefulWidget {
   const BooksTableScreen({super.key});
@@ -16,8 +18,15 @@ class BooksTableScreen extends ConsumerStatefulWidget {
 
 class _BooksTableScreenState extends ConsumerState<BooksTableScreen> {
   @override
+  void initState() {
+    super.initState();
+
+    ref.refresh(getRealTimeAcceptedBooksProvider);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final member = ref.watch(allRealtimeAcceptedMemberProvider);
+    final books = ref.watch(getRealTimeAcceptedBooksProvider);
 
     //
     return Scaffold(
@@ -39,14 +48,18 @@ class _BooksTableScreenState extends ConsumerState<BooksTableScreen> {
           ),
         ],
       ),
-      body: Text(member.toString()),
+      body: books.when(
+        data: (book) => BookTable(book: book),
+        error: (error, _) => ErrorScreen(error: error.toString()),
+        loading: () => LoadingScreen(),
+      ),
     );
   }
 }
 
-class UserTable extends StatelessWidget {
-  const UserTable({required this.member, super.key});
-  final List<MemberModel> member;
+class BookTable extends StatelessWidget {
+  const BookTable({required this.book, super.key});
+  final List<BookModel> book;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -103,13 +116,13 @@ class UserTable extends StatelessWidget {
           ),
         ],
         rows: List<DataRow>.generate(
-          member.length,
+          book.length,
           (index) => DataRow(
             cells: [
-              DataCell(Text(member[index].user.uid)),
-              DataCell(Text(member[index].user.name)),
-              DataCell(Text(member[index].user.email)),
-              DataCell(Text(member[index].role.name)),
+              DataCell(Text(book[index].id)),
+              DataCell(Text(book[index].title)),
+              DataCell(Text(book[index].uploader?.name ?? 'N/A')),
+              DataCell(Text(book[index].accepted_at ?? 'N/A')),
               DataCell(
                 Row(
                   children: [

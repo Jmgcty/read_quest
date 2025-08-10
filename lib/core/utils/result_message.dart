@@ -4,6 +4,8 @@ String resultMessage(String result) {
       return "Invalid credentials, please try again!";
     case "general_argument_invalid":
       return "Invalid ID, please try again!";
+    case "document_already_exists":
+      return "Book already exists, please try again!";
     default:
       return result;
   }

@@ -9,9 +9,11 @@ import 'package:read_quest/core/const/app_colors.dart';
 import 'package:read_quest/core/modals/loading_modal.dart';
 import 'package:read_quest/core/utils/enum/member_enum.dart';
 import 'package:read_quest/core/widgets/primary_button.dart';
+import 'package:read_quest/features/auth/repository/auth_repository.dart';
 import 'package:read_quest/features/home/views/home_screen.dart';
 import 'package:read_quest/features/membership/provider/get_future_membership.dart';
 import 'package:read_quest/features/membership/repository/member_repository.dart';
+import 'package:read_quest/features/start/views/get_started_screen.dart';
 
 class MembershipPendingScreen extends ConsumerStatefulWidget {
   const MembershipPendingScreen({super.key});
@@ -76,6 +78,34 @@ class _MembershipPendingScreenState
     }
   }
 
+  void logout() async {
+    await AwesomeDialog(
+      context: context,
+      dialogType: DialogType.question,
+      animType: AnimType.scale,
+      title: 'Logout',
+      desc: 'Are you sure you want to logout?',
+      btnCancelOnPress: () {},
+      btnOkOnPress: () async {
+        await ref.read(authRepositoryProvider).logout();
+        if (!mounted) return;
+        await AwesomeDialog(
+          context: context,
+          dialogType: DialogType.success,
+          animType: AnimType.scale,
+          title: 'Logout Successfully',
+          desc: 'You have successfully logged out.',
+        ).show();
+        if (!mounted) return;
+        Navigator.pushAndRemoveUntil(
+          context,
+          CupertinoPageRoute(builder: (_) => GetStartedScreen()),
+          (_) => false,
+        );
+      },
+    ).show();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -110,6 +140,12 @@ class _MembershipPendingScreenState
               ),
               Gap(size.height / 40),
               PrimaryButton(label: 'Check Status', onPressed: checkStatus),
+              Gap(size.height / 60),
+              PrimaryButton(
+                color: AppColors.textLabel,
+                label: 'Logout',
+                onPressed: logout,
+              ),
             ],
           ),
         ),

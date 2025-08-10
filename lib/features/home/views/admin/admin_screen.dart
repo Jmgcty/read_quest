@@ -7,7 +7,7 @@ import 'package:read_quest/features/home/views/admin/provider/page_provider.dart
 import 'package:read_quest/features/home/views/admin/screen/books/book_screen.dart';
 import 'package:read_quest/features/home/views/admin/screen/dashboard/dashboard_screen.dart';
 import 'package:read_quest/features/home/views/admin/screen/games/game_screen.dart';
-import 'package:read_quest/features/home/views/admin/screen/other/setting_screen.dart';
+import 'package:read_quest/features/home/views/admin/screen/other/more_control_screen.dart';
 
 class AdminScreen extends ConsumerStatefulWidget {
   const AdminScreen({super.key});

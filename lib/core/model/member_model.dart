@@ -16,6 +16,22 @@ class MemberModel {
     this.updatedAt,
   });
 
+  MemberModel copyWith({
+    UserModel? user,
+    UserTypes? role,
+    MemberStatus? status,
+    String? createdAt,
+    String? updatedAt,
+  }) {
+    return MemberModel(
+      user: user ?? this.user,
+      role: role ?? this.role,
+      status: status ?? this.status,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
   factory MemberModel.fromJson(Map<String, dynamic> json) {
     return MemberModel(
       user: UserModel.fromMap(json['user']),
