@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:read_quest/core/const/app_border_settings.dart';
 import 'package:read_quest/core/const/app_colors.dart';
 import 'package:read_quest/features/home/views/admin/screen/dashboard/book_management/book_table.dart';
+import 'package:read_quest/features/home/views/admin/screen/dashboard/shortcut/pending_member.dart';
 import 'package:read_quest/features/home/views/admin/screen/dashboard/user_management/user_table.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -136,9 +137,22 @@ class ShortCuts extends StatelessWidget {
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
         ),
-        children: const [
-          ShortCutItem(title: 'Membership', icon: Icons.person_add_alt_1),
-          ShortCutItem(title: 'Book Request', icon: Icons.bookmark_add),
+        children: [
+          ShortCutItem(
+            title: 'Membership',
+            icon: Icons.person_add_alt_1,
+            onTap: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(builder: (_) => const PendingMember()),
+              );
+            },
+          ),
+          ShortCutItem(
+            title: 'Book Request',
+            icon: Icons.bookmark_add,
+            onTap: null,
+          ),
         ],
       ),
     );
@@ -146,31 +160,40 @@ class ShortCuts extends StatelessWidget {
 }
 
 class ShortCutItem extends StatelessWidget {
-  const ShortCutItem({required this.title, required this.icon, super.key});
+  const ShortCutItem({
+    required this.title,
+    required this.icon,
+    this.onTap,
+    super.key,
+  });
   final String title;
   final IconData icon;
+  final VoidCallback? onTap;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Container(
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: AppColors.grey,
-        borderRadius: BorderRadius.circular(AppBorderSettings.borderRadius),
-      ),
-      child: Wrap(
-        alignment: WrapAlignment.center,
-        runSpacing: size.height / 120,
-        children: [
-          Icon(icon, size: size.width / 10, color: AppColors.white),
-          Text(
-            title,
-            style: Theme.of(context).textTheme.labelSmall!.copyWith(
-              color: AppColors.white,
-              fontWeight: FontWeight.bold,
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: AppColors.grey,
+          borderRadius: BorderRadius.circular(AppBorderSettings.borderRadius),
+        ),
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          runSpacing: size.height / 120,
+          children: [
+            Icon(icon, size: size.width / 10, color: AppColors.white),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                color: AppColors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
