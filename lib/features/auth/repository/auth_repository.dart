@@ -100,6 +100,23 @@ class AuthRepository {
       return null;
     }
   }
+
+  Future<Result> logout() async {
+    try {
+      final storagePref = SharedPrefStorage.instance;
+      final account = Account(client);
+      final userID = await storagePref.getAuthSession();
+      await account.deleteSession(sessionId: userID!);
+      await storagePref.removeAuthSession();
+      return Result.success();
+    } on AppwriteException catch (e) {
+      log("AppwriteException: ${e.message} - ${e.type}");
+      return Result.error(resultMessage(e.type!));
+    } catch (e) {
+      log("Unknown error: ${e.toString()}");
+      return Result.error("Unknown error: ${e.toString()}");
+    }
+  }
 }
 
 final authRepositoryProvider = Provider(
