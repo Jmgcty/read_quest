@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_quest/core/const/app_colors.dart';
 import 'package:read_quest/core/utils/formatter.dart';
-import 'package:read_quest/features/home/enum/admin_page_name.dart';
+import 'package:read_quest/features/home/enum/page_names.dart';
 import 'package:read_quest/features/home/views/admin/provider/page_provider.dart';
 import 'package:read_quest/features/home/views/admin/screen/books/book_screen.dart';
 import 'package:read_quest/features/home/views/admin/screen/dashboard/dashboard_screen.dart';

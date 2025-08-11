@@ -21,4 +21,5 @@ class AppColors {
   static const Color textLabel = Color(0xFF6E6E6E);
   static const Color backgroundBlue = Color(0xFFA3E3FF);
   static const Color disabled = Color(0xFFB5B5B5);
+  static const Color primaryDarkBlue = Color(0xFF0082BD);
 }
