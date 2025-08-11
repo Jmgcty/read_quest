@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:read_quest/core/const/app_assets.dart';
 import 'package:read_quest/core/services/pref_storage.dart';
 import 'package:read_quest/core/utils/enum/member_enum.dart';
@@ -94,16 +95,22 @@ class _GetStartedScreenState extends ConsumerState<GetStartedScreen> {
                 filterQuality: FilterQuality.high,
               ),
               Gap(size.height / 20),
-              if (!widget.isButtonHide)
-                PrimaryButton(
-                  label: 'Get Started',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(builder: (_) => const LoginScreen()),
-                    );
-                  },
-                ),
+              widget.isButtonHide
+                  ? LoadingAnimationWidget.staggeredDotsWave(
+                      color: Colors.white,
+                      size: 50,
+                    )
+                  : PrimaryButton(
+                      label: 'Get Started',
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (_) => const LoginScreen(),
+                          ),
+                        );
+                      },
+                    ),
             ],
           ),
         ),
