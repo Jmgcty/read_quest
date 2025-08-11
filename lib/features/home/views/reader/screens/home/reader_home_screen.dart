@@ -14,7 +14,7 @@ class ReaderHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final theme = Theme.of(context);
+
     return SafeArea(
       child: SingleChildScrollView(
         padding: EdgeInsets.symmetric(vertical: size.height / 40),
@@ -114,7 +114,6 @@ class ShortCutSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final size = MediaQuery.of(context).size;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: size.width / 18),
