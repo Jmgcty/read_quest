@@ -1,12 +1,20 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:read_quest/core/const/app_assets.dart';
 import 'package:read_quest/core/const/app_border_settings.dart';
 import 'package:read_quest/core/const/app_colors.dart';
+import 'package:read_quest/core/handler/appwrite_file_handler.dart';
+import 'package:read_quest/core/model/book_model.dart';
 import 'package:read_quest/core/utils/formatter.dart';
+import 'package:read_quest/features/home/provider/get_books.dart';
 import 'package:read_quest/features/home/provider/get_current_user.dart';
+import 'package:read_quest/features/home/views/reader/screens/book/views/book_info.dart';
+import 'package:read_quest/features/home/views/reader/screens/home/shortcuts/views/badges_earned.dart';
+import 'package:read_quest/features/home/views/reader/screens/home/shortcuts/views/my_books.dart';
+import 'package:read_quest/features/home/views/reader/screens/home/shortcuts/views/quizzes_passed.dart';
 
 class ReaderHomeScreen extends StatelessWidget {
   const ReaderHomeScreen({super.key});
@@ -121,23 +129,38 @@ class ShortCutSection extends StatelessWidget {
         children: [
           shortcutTile(
             context,
-            title: 'Grade 5 Learner',
+            title: 'My Books',
             icon: Icons.book,
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(builder: (_) => const MyBooks()),
+              );
+            },
           ),
           Gap(size.width / 34),
           shortcutTile(
             context,
             title: 'Quizzes Passed',
             icon: Icons.quiz,
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(builder: (_) => const QuizzesPassed()),
+              );
+            },
           ),
           Gap(size.width / 34),
           shortcutTile(
             context,
             title: 'Badges Earned',
             icon: Icons.stars_rounded,
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(builder: (_) => const BadgesEarned()),
+              );
+            },
           ),
         ],
       ),
@@ -327,11 +350,19 @@ class ReadingHistorySection extends StatelessWidget {
   }
 }
 
-class RecommendedBookSection extends StatelessWidget {
+class RecommendedBookSection extends ConsumerStatefulWidget {
   const RecommendedBookSection({super.key});
 
   @override
+  ConsumerState<RecommendedBookSection> createState() =>
+      _RecommendedBookSectionState();
+}
+
+class _RecommendedBookSectionState
+    extends ConsumerState<RecommendedBookSection> {
+  @override
   Widget build(BuildContext context) {
+    final readingBook = ref.watch(getBooksProvider).value;
     final size = MediaQuery.of(context).size;
     final theme = Theme.of(context);
     return Container(
@@ -355,7 +386,7 @@ class RecommendedBookSection extends StatelessWidget {
             ),
           ),
           Gap(size.height / 40),
-          RecommendedBook(),
+          RecommendedBook(books: readingBook ?? []),
           TextButton(
             onPressed: () {},
             child: Text(
@@ -375,88 +406,102 @@ class RecommendedBookSection extends StatelessWidget {
 }
 
 class RecommendedBook extends StatelessWidget {
-  const RecommendedBook({super.key});
-
+  const RecommendedBook({required this.books, super.key});
+  final List<BookModel> books;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: [
-          CardItem(index: 0),
-          CardItem(index: 1),
-          CardItem(index: 2),
-          CardItem(index: 3),
-        ],
+        children: List.generate(
+          books.length,
+          (index) => CardItem(
+            book: books[index],
+            onTap: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (_) => BookInfo(book: books[index]),
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
 }
 
-class CardItem extends StatelessWidget {
-  final int index;
-  const CardItem({super.key, required this.index});
-
+class CardItem extends ConsumerWidget {
+  const CardItem({super.key, required this.book, this.onTap});
+  final BookModel book;
+  final VoidCallback? onTap;
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final image = ref.watch(appwriteImageProvider(book.cover)).value;
     final size = MediaQuery.of(context).size;
     final theme = Theme.of(context);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: size.width / 80),
-      child: Stack(
-        children: [
-          Container(
-            width: size.width / 2.5,
-            height: size.height / 3.5,
-            color: AppColors.disabled,
-            child: Icon(Icons.book, color: AppColors.white),
-          ),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Stack(
+          children: [
+            Container(
+              width: size.width / 2.5,
+              height: size.height / 3.5,
+              color: AppColors.disabled,
+              child: image != null
+                  ? Image.memory(image, fit: BoxFit.cover)
+                  : Icon(Icons.book, color: AppColors.white),
+            ),
 
-          Container(
-            width: size.width / 2.5,
-            height: size.height / 3.5,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.transparent, Colors.black54],
+            Container(
+              width: size.width / 2.5,
+              height: size.height / 3.5,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Colors.black54],
+                ),
               ),
             ),
-          ),
-          Positioned(
-            left: 6,
-            bottom: 6,
-            child: Text(
-              'Book Title',
-              style: theme.textTheme.headlineSmall!.copyWith(
-                fontSize: size.width / 24,
-                fontWeight: FontWeight.bold,
-                color: AppColors.white,
+            Positioned(
+              left: 6,
+              bottom: 6,
+              child: Text(
+                book.title,
+                style: theme.textTheme.headlineSmall!.copyWith(
+                  fontSize: size.width / 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.white,
+                ),
               ),
             ),
-          ),
 
-          Positioned(
-            top: 6,
-            left: 6,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: Container(
-                height: 20,
-                width: 20,
-                alignment: Alignment.center,
-                color: AppColors.primary,
-                child: Text(
-                  '10',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+            Positioned(
+              top: 6,
+              left: 6,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: Container(
+                  height: 20,
+                  width: 20,
+                  alignment: Alignment.center,
+                  color: AppColors.primary,
+                  child: Text(
+                    '10',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
