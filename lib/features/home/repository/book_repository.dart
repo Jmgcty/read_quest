@@ -173,6 +173,28 @@ class BookRepository {
       return Result.error("Unknown error: ${e.toString()}");
     }
   }
+
+  Future<List<BookModel>> fetchBooks() async {
+    try {
+      final databases = Databases(client);
+      final initial = await databases.listDocuments(
+        databaseId: AppWriteConst.appWriteDatabaseID,
+        collectionId: AppWriteConst.booksCollectionId,
+        queries: [
+          Query.and([Query.isNotNull('accepted_at'), Query.isNotNull('file')]),
+        ],
+      );
+
+      return initial.documents.map((e) => BookModel.fromJson(e.data)).toList();
+    } on AppwriteException catch (e) {
+      log('Error fetching books: $e');
+
+      return [];
+    } catch (e) {
+      log("Unknown error: ${e.toString()}");
+      return [];
+    }
+  }
 }
 
 final bookRepositoryProvider = Provider(
